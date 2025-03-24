@@ -25,17 +25,17 @@
 
  We will implement and compare multiple traditional ML techniques, including:
 
-   k-Nearest Neighbors (KNN)
-  
-   Support Vector Machine (SVM)
-  
-   Decision Tree
-  
-   Bayesian Learning (Naïve Bayes)
-  
-   K-Means Clustering
-  
-   Regression Models (if applicable)
+     k-Nearest Neighbors (KNN)
+    
+     Support Vector Machine (SVM)
+    
+     Decision Tree
+    
+     Bayesian Learning (Naïve Bayes)
+    
+     K-Means Clustering
+    
+     Regression Models (if applicable)
 
 
 
