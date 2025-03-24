@@ -28,7 +28,15 @@ Encourage innovation within classical concepts.
 
 
 
- # 3.
+ # 3. Dataset Information
+
+Dataset Source: GTZAN Dataset on Kaggle
+
+Contains 1000 audio tracks (30 sec each).
+
+10 genres: Blues, Classical, Country, Disco, Hip-Hop, Jazz, Metal, Pop, Reggae, Rock.
+
+Available as .wav files with metadata.
 
 
 
