@@ -1,7 +1,12 @@
 # Music Genre Classification Project
 
-# 1.
+# 1. Project Overview
 
+This project aims to classify music into different genres using traditional machine learning techniques. 
+
+We will use the GTZAN dataset from Kaggle, which contains audio tracks categorized into ten genres.
+
+The goal is to extract meaningful features from the audio files and apply multiple ML algorithms to analyze and compare their performance.
 
 
 
