@@ -31,7 +31,7 @@ Encourage innovation within classical concepts.
 
 
 
-4. Techniques to Implement
+# 4. Techniques to Implement
 
  We will implement and compare multiple traditional ML techniques, including:
 
