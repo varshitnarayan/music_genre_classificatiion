@@ -5,7 +5,17 @@
 
 
 
-2.
+#2.  Objectives
+
+Implement at least four to five traditional ML techniques.
+
+Systematically compare the models using multiple performance measures.
+
+Conduct failure case analysis to understand misclassifications.
+
+Focus on classical ML techniques, avoiding modern domain-specific methods like NLP or deep learning.
+
+Encourage innovation within classical concepts.
 
 
 
