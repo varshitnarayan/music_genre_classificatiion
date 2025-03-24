@@ -58,13 +58,13 @@
 
  -  Feature Extraction: Extract key features using Librosa.
    
-   Preprocessing: Normalize data and prepare it for ML models.
+ -  Preprocessing: Normalize data and prepare it for ML models.
    
-   Model Training & Testing: Implement the selected ML techniques.
+ -  Model Training & Testing: Implement the selected ML techniques.
    
-   Comparison & Analysis: Evaluate models and analyze errors.
+ -  Comparison & Analysis: Evaluate models and analyze errors.
    
-   Daily Updates: Regularly update findings and improvements.
+ -  Daily Updates: Regularly update findings and improvements.
 
 
 
