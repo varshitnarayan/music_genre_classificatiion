@@ -5,7 +5,7 @@
 
 
 
-#2.  Objectives
+# 2.  Objectives
 
 Implement at least four to five traditional ML techniques.
 
