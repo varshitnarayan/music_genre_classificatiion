@@ -1,0 +1,58 @@
+# Music Genre Classification Code Template
+
+# Step 1: Import necessary libraries
+import librosa
+import numpy as np
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Step 2: Load and preprocess the dataset
+# TODO: Implement function to load GTZAN dataset from Kaggle
+def load_dataset(dataset_path):
+    """Load audio files and extract labels."""
+    pass  # Implement file loading
+
+# Step 3: Feature Extraction
+# TODO: Implement MFCC feature extraction
+
+def extract_features(file_path):
+    """Extract MFCC and other relevant features from audio files."""
+    pass  # Implement feature extraction
+
+# Step 4: Prepare Data for ML Models
+# TODO: Convert extracted features into a structured format
+def prepare_data():
+    """Prepare dataset for training ML models."""
+    pass  # Implement data preparation
+
+# Step 5: Train and Test ML Models
+# TODO: Implement multiple ML models (KNN, SVM, Decision Tree, Naïve Bayes, K-Means, etc.)
+
+def train_knn(X_train, y_train):
+    """Train and return a k-NN classifier."""
+    pass  # Implement k-NN model
+
+# Similarly, implement SVM, Decision Tree, Naïve Bayes, K-Means, etc.
+
+# Step 6: Evaluate Model Performance
+# TODO: Implement evaluation metrics (Accuracy, Precision, Recall, Confusion Matrix)
+
+def evaluate_model(model, X_test, y_test):
+    """Evaluate model performance and display results."""
+    pass  # Implement evaluation
+
+# Step 7: Compare Models & Analyze Failures
+# TODO: Perform failure case analysis
+
+def analyze_failures(y_true, y_pred):
+    """Analyze misclassified samples."""
+    pass  # Implement failure case analysis
+
+# Main Execution Flow
+if __name__ == "__main__":
+    # TODO: Call each function in order to complete the classification process
+    pass
