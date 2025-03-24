@@ -41,7 +41,15 @@
 
 
 
-5.
+# 5.  Performance Evaluation
+
+----   To systematically compare results, we will use:
+   
+----   Accuracy, Precision, Recall, and F1-score
+   
+----   Confusion Matrices to analyze misclassifications
+   
+----   Qualitative analysis to identify failure cases
 
 
 
