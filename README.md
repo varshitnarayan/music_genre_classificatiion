@@ -1,6 +1,6 @@
 # Music Genre Classification Project
 
-1.
+# 1.
 
 
 
@@ -23,7 +23,7 @@ Encourage innovation within classical concepts.
 
 
 
-3.
+ # 3.
 
 
 
