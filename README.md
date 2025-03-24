@@ -1,4 +1,4 @@
-Music Genre Classification Project
+# Music Genre Classification Project
 
 1.
 
@@ -25,17 +25,17 @@ Music Genre Classification Project
 
  We will implement and compare multiple traditional ML techniques, including:
 
-  # k-Nearest Neighbors (KNN)
+   k-Nearest Neighbors (KNN)
   
-  # Support Vector Machine (SVM)
+   Support Vector Machine (SVM)
   
-  # Decision Tree
+   Decision Tree
   
-  # Bayesian Learning (Naïve Bayes)
+   Bayesian Learning (Naïve Bayes)
   
-  # K-Means Clustering
+   K-Means Clustering
   
-  # Regression Models (if applicable)
+   Regression Models (if applicable)
 
 
 
