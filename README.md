@@ -40,11 +40,26 @@ Available as .wav files with metadata.
 
 
 
+# 4. Feature Extraction
+ Implemented using numpy and Python’s built-in wave module.
+    
+    Spectral Centroid
+    
+    Spectral Bandwidth
+    
+    Spectral Rolloff
+    
+    Zero Crossing Rate
+    
+    Root Mean Square Energy (RMSE)
+    
+    Estimated Tempo
+    
+    Duration
 
 
 
-
-# 4. Techniques to Implement
+# 5. Techniques to Implement
 
  We will implement and compare multiple traditional ML techniques, including:
 
@@ -64,7 +79,7 @@ Available as .wav files with metadata.
 
 
 
-# 5.  Performance Evaluation
+# 6.  Performance Evaluation
 
 *   To systematically compare results, we will use:
    
@@ -77,7 +92,7 @@ Available as .wav files with metadata.
 
 
 
-# 6. Implementation Plan  
+# 7. Implementation Plan  
 
  -  Feature Extraction: Extract key features using Librosa.
    
