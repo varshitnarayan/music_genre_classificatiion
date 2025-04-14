@@ -1,0 +1,107 @@
+import numpy as np
+import random
+import matplotlib.pyplot as plt
+from collections import Counter, defaultdict
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+# Encode labels
+def encode_labels(y):
+    label_to_index = {label: idx for idx, label in enumerate(sorted(set(y)))}
+    index_to_label = {idx: label for label, idx in label_to_index.items()}
+    y_encoded = [label_to_index[label] for label in y]
+    return y_encoded, label_to_index, index_to_label
+
+# Train-test split
+def train_test_split(X, y, test_ratio=0.2):
+    indices = list(range(len(X)))
+    random.shuffle(indices)
+    split = int(len(X) * (1 - test_ratio))
+    train_idx, test_idx = indices[:split], indices[split:]
+    return [X[i] for i in train_idx], [y[i] for i in train_idx], [X[i] for i in test_idx], [y[i] for i in test_idx]
+
+# Decision stump (best split on one feature)
+def best_split(X, y):
+    X_np = np.array(X)
+    y_np = np.array(y)
+    n_features = X_np.shape[1]
+    best_feat, best_thresh, best_gini = None, None, float('inf')
+
+    for feat in range(n_features):
+        thresholds = np.unique(X_np[:, feat])
+        for thresh in thresholds:
+            left = y_np[X_np[:, feat] <= thresh]
+            right = y_np[X_np[:, feat] > thresh]
+            if len(left) == 0 or len(right) == 0:
+                continue
+            gini = (len(left)/len(y_np)) * (1 - sum((np.sum(left==c)/len(left))**2 for c in set(left))) + \
+                   (len(right)/len(y_np)) * (1 - sum((np.sum(right==c)/len(right))**2 for c in set(right)))
+            if gini < best_gini:
+                best_gini = gini
+                best_feat = feat
+                best_thresh = thresh
+    return best_feat, best_thresh
+
+# Train a decision stump
+def train_stump(X, y):
+    feat, thresh = best_split(X, y)
+    if feat is None:
+        return None
+    stump = {'feature': feat, 'threshold': thresh, 'left': None, 'right': None}
+    left_labels = [y[i] for i in range(len(X)) if X[i][feat] <= thresh]
+    right_labels = [y[i] for i in range(len(X)) if X[i][feat] > thresh]
+    stump['left'] = Counter(left_labels).most_common(1)[0][0]
+    stump['right'] = Counter(right_labels).most_common(1)[0][0]
+    return stump
+
+# Predict with a stump
+def predict_stump(stump, x):
+    if x[stump['feature']] <= stump['threshold']:
+        return stump['left']
+    else:
+        return stump['right']
+
+# Build a Random Forest
+def build_forest(X, y, n_trees=20):
+    forest = []
+    feature_counts = defaultdict(int)
+    for _ in range(n_trees):
+        indices = np.random.choice(len(X), size=len(X), replace=True)
+        X_sample = [X[i] for i in indices]
+        y_sample = [y[i] for i in indices]
+        stump = train_stump(X_sample, y_sample)
+        if stump:
+            forest.append(stump)
+            feature_counts[stump['feature']] += 1
+    return forest, feature_counts
+
+# Predict with majority voting
+def predict_forest(forest, x):
+    preds = [predict_stump(tree, x) for tree in forest]
+    return Counter(preds).most_common(1)[0][0]
+
+# Evaluate accuracy
+def evaluate_forest(forest, X_test, y_test):
+    correct = 0
+    predictions = []
+    for i, x in enumerate(X_test):
+        pred = predict_forest(forest, x)
+        predictions.append(pred)
+        if pred == y_test[i]:
+            correct += 1
+    accuracy = correct / len(y_test)
+    return accuracy, predictions
+
+# ---------- Run the Random Forest ----------
+# Normalize and encode
+X_norm = normalize_features(X)
+y_encoded, label_to_index, index_to_label = encode_labels(y)
+
+# Split data
+X_train, y_train, X_test, y_test = train_test_split(X_norm, y_encoded, test_ratio=0.2)
+
+# Train forest
+forest, feature_counts = build_forest(X_train, y_train, n_trees=30)
+
+# Evaluate
+accuracy, y_pred = evaluate_forest(forest, X_test, y_test)
+print(f"Random Forest Accuracy: {accuracy * 100:.2f}%")
