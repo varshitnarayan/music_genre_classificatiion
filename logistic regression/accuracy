@@ -1,0 +1,139 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+# -----------------------------
+# Multi-class Logistic Regression Code
+# -----------------------------
+def softmax(z):
+    """
+    Compute softmax values for each set of scores in z.
+    z: ndarray of shape (m, num_classes)
+    Returns:
+       probabilities: ndarray of same shape as z
+    """
+    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))  # for numerical stability
+    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+
+
+class MultiClassLogisticRegression:
+    def __init__(self, learning_rate=0.1, num_iterations=1000):
+        """
+        Multi-class logistic regression classifier using softmax.
+
+        Parameters:
+            learning_rate (float): Step size for gradient descent.
+            num_iterations (int): Number of iterations for training.
+        """
+        self.learning_rate = learning_rate
+        self.num_iterations = num_iterations
+
+    def fit(self, X, y):
+        """
+        Train the logistic regression classifier.
+
+        Parameters:
+            X (ndarray): Input features of shape (m, n).
+            y (ndarray): Integer labels of shape (m,), values 0,...,K-1.
+        """
+        m, n = X.shape
+        self.num_classes = np.max(y) + 1
+        # Initialize weights and biases
+        self.weights = np.zeros((n, self.num_classes))
+        self.bias = np.zeros((1, self.num_classes))
+
+        # Convert y to one-hot encoding
+        y_one_hot = np.eye(self.num_classes)[y]  # shape (m, num_classes)
+
+        for i in range(self.num_iterations):
+            # Linear scores: shape (m, num_classes)
+            z = np.dot(X, self.weights) + self.bias
+            # Predicted probabilities via softmax
+            probs = softmax(z)  # shape (m, num_classes)
+
+            # Compute the gradient of loss (cross entropy)
+            dz = (probs - y_one_hot)  # shape (m, num_classes)
+            dw = (1 / m) * np.dot(X.T, dz)  # shape (n, num_classes)
+            db = (1 / m) * np.sum(dz, axis=0, keepdims=True)  # shape (1, num_classes)
+
+            # Update parameters
+            self.weights -= self.learning_rate * dw
+            self.bias -= self.learning_rate * db
+
+    def predict(self, X):
+        """
+        Predict class labels for samples in X.
+
+        Parameters:
+            X (ndarray): Feature matrix of shape (m, n).
+
+        Returns:
+            predictions (ndarray): Predicted class labels of shape (m,).
+        """
+        z = np.dot(X, self.weights) + self.bias
+        probs = softmax(z)
+        return np.argmax(probs, axis=1)
+
+
+def calculate_accuracy(y_true, y_pred):
+    """Calculate accuracy as the fraction of correct predictions."""
+    return np.mean(y_true == y_pred)
+
+
+def custom_train_test_split(X, y, test_size=0.2, random_state=42):
+    """
+    Split arrays into random train and test subsets.
+
+    Parameters:
+        X (ndarray): Feature matrix.
+        y (ndarray): Label array.
+        test_size (float): Proportion to use as test data.
+        random_state (int): Random seed.
+
+    Returns:
+        X_train, X_test, y_train, y_test: The split datasets.
+    """
+    if random_state is not None:
+        np.random.seed(random_state)
+    indices = np.arange(len(X))
+    np.random.shuffle(indices)
+    split = int(len(X) * test_size)
+    test_indices = indices[:split]
+    train_indices = indices[split:]
+    return X[train_indices], X[test_indices], y[train_indices], y[test_indices]
+
+
+# -----------------------------
+# Main Code: Using Feature Extraction and Multi-class Logistic Regression
+# -----------------------------
+if __name__ == '__main__':
+    # (Assuming you have already mounted your drive and run your feature extraction code)
+    dataset_path = '/content/drive/MyDrive/genres_original'
+    # X, y = prepare_dataset(dataset_path)
+    print("Dataset size:", len(X))
+
+    # Normalize features using your provided function
+    X_norm = np.array(normalize_features(X))
+
+    # Encode string labels to integers (mapping each genre to a unique integer)
+    classes = np.unique(y)
+    print("Classes:", classes)
+    label_to_int = {label: idx for idx, label in enumerate(classes)}
+    y_encoded = np.array([label_to_int[label] for label in y])
+
+    # Split dataset into training and test sets
+    X_train, X_test, y_train, y_test = custom_train_test_split(X_norm, y_encoded, test_size=0.2, random_state=42)
+
+    # Train multi-class logistic regression
+    model = MultiClassLogisticRegression(learning_rate=0.1, num_iterations=1000)
+    model.fit(X_train, y_train)
+
+    # Predict on the test set
+    y_pred = model.predict(X_test)
+
+    # Calculate and print accuracy
+    acc = calculate_accuracy(y_test, y_pred)
+    print(f"Multi-class Logistic Regression Accuracy: {acc * 100:.2f}%")
+
