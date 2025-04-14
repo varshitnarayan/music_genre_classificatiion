@@ -1,0 +1,13 @@
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_2d = pca.fit_transform(X_norm)
+
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x=X_2d[:, 0], y=X_2d[:, 1], hue=y, palette='tab10', legend='full', s=60)
+plt.title('PCA Projection of Music Features')
+plt.xlabel('PC 1')
+plt.ylabel('PC 2')
+plt.legend(title='Genre', loc='best', bbox_to_anchor=(1, 1))
+plt.tight_layout()
+plt.show()
