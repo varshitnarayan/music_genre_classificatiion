@@ -1,0 +1,13 @@
+# Per-class accuracy
+per_class_acc = cm.diagonal() / cm.sum(axis=1)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=classes, y=per_class_acc)
+plt.ylim(0, 1)
+plt.ylabel('Accuracy')
+plt.xlabel('Genre')
+plt.title('Per-Class Accuracy')
+plt.xticks(rotation=45)
+plt.grid(True, axis='y')
+plt.tight_layout()
+plt.show()
