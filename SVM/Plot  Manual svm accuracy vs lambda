@@ -1,0 +1,18 @@
+lambda_values = np.unique(np.round(np.logspace(-3, 0, num=20), 3))
+
+accuracies = []
+
+for lam in lambda_values:
+    svm_acc = evaluate_manual_svm(X, y, lam)  # You'd need to modify your function to take lambda_param
+    accuracies.append(svm_acc)
+    print(f"Lambda {lam}: Accuracy = {svm_acc * 100:.2f}%")
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(lambda_values, [a * 100 for a in accuracies], marker='o', linestyle='-', color='darkgreen')
+plt.title('Manual SVM Accuracy vs Lambda (Regularization Strength)')
+plt.xlabel('Lambda')
+plt.ylabel('Accuracy (%)')
+plt.xscale('log')  # Optional: log scale for lambda
+plt.grid(True)
+plt.show()
