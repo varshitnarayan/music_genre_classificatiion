@@ -1,0 +1,41 @@
+import matplotlib.pyplot as plt
+
+split_runs = 100
+accuracies = []
+
+for seed in range(split_runs):
+    X_train, X_test, y_train, y_test = my_train_test_split(X, y, test_size=0.2, random_state=seed)
+
+    # Normalize only train and test independently if you want a fair split
+    X_train = normalize_features(X_train)
+    X_test = normalize_features(X_test)
+
+    model = GaussianNaiveBayes()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    acc = np.mean(np.array(y_pred) == np.array(y_test))
+    accuracies.append(acc)
+    print(f"Run {seed + 1}: Accuracy = {acc * 100:.2f}%")
+
+# Best run info
+best_run_idx = np.argmax(accuracies)
+best_run = best_run_idx + 1
+best_accuracy = accuracies[best_run_idx] * 100
+
+# Plotting
+plt.figure(figsize=(12, 6))
+plt.plot(range(1, split_runs + 1), [a * 100 for a in accuracies], marker='o', linestyle='-', color='green', label='Accuracy per run')
+plt.scatter(best_run, best_accuracy, color='red', s=100, zorder=5, label=f'Best Accuracy ({best_accuracy:.2f}%)')
+plt.text(best_run, best_accuracy + 0.5, f"Run {best_run}\n{best_accuracy:.2f}%", ha='center', fontsize=9, color='red')
+
+plt.title('Naive Bayes Accuracy over Multiple Random Splits')
+plt.xlabel('Run Number (Different random seeds)')
+plt.ylabel('Accuracy (%)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.xticks(range(1, split_runs + 1, max(1, split_runs // 20)))
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print(f"\n✅ Best Accuracy: {best_accuracy:.2f}% on Run {best_run}")
