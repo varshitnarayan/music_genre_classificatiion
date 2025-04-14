@@ -1,0 +1,6 @@
+def normalize_features(X):
+    X_np = np.array(X)
+    min_vals = X_np.min(axis=0)
+    max_vals = X_np.max(axis=0)
+    norm_X = (X_np - min_vals) / (max_vals - min_vals + 1e-9)
+    return norm_X.tolist()
