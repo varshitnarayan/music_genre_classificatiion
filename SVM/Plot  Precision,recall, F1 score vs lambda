@@ -1,0 +1,68 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def compute_manual_metrics(y_true, y_pred, classes):
+    num_classes = len(classes)
+    cm = np.zeros((num_classes, num_classes), dtype=int)
+    class_to_idx = {cls: idx for idx, cls in enumerate(classes)}
+
+    for t, p in zip(y_true, y_pred):
+        cm[class_to_idx[t]][class_to_idx[p]] += 1
+
+    precision, recall, f1 = [], [], []
+    for i in range(num_classes):
+        TP = cm[i][i]
+        FP = np.sum(cm[:, i]) - TP
+        FN = np.sum(cm[i, :]) - TP
+
+        prec = TP / (TP + FP + 1e-9)
+        rec = TP / (TP + FN + 1e-9)
+        f1_score = 2 * prec * rec / (prec + rec + 1e-9)
+
+        precision.append(prec)
+        recall.append(rec)
+        f1.append(f1_score)
+
+    return np.mean(precision), np.mean(recall), np.mean(f1)
+
+# Vary lambda and collect metrics
+lambda_values = [0.0001, 0.001, 0.01, 0.1, 1]
+prec_list, rec_list, f1_list = [], [], []
+
+for lam in lambda_values:
+    # Normalize and split again
+    X_norm = normalize_features(X)
+    X_train, X_test, y_train, y_test = train_test_split(X_norm, y, test_size=0.2, random_state=42)
+
+    classes = np.unique(y)
+    classifiers = {}
+    for cls in classes:
+        binary_y = one_vs_all_labels(y_train, cls)
+        svm = SimpleLinearSVM(lambda_param=lam)
+        svm.fit(X_train, binary_y)
+        classifiers[cls] = svm
+
+    y_pred = []
+    for x in X_test:
+        scores = {cls: np.dot(x, clf.w) - clf.b for cls, clf in classifiers.items()}
+        pred = max(scores, key=scores.get)
+        y_pred.append(pred)
+
+    prec, rec, f1 = compute_manual_metrics(y_test, y_pred, classes)
+    prec_list.append(prec)
+    rec_list.append(rec)
+    f1_list.append(f1)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(lambda_values, prec_list, label='Precision', marker='o', color='skyblue')
+plt.plot(lambda_values, rec_list, label='Recall', marker='s', color='lightgreen')
+plt.plot(lambda_values, f1_list, label='F1 Score', marker='^', color='salmon')
+plt.title("Precision, Recall, F1 Score vs. Lambda (Manual SVM)")
+plt.xlabel("Lambda")
+plt.ylabel("Score")
+plt.ylim(0, 1.05)
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
