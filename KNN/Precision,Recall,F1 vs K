@@ -1,0 +1,100 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from collections import Counter
+
+k_values = list(range(1, 16))
+acc_list = []
+prec_list = []
+rec_list = []
+f1_list = []
+
+best_k = None
+best_acc = 0
+
+# Manual split (used for all k)
+X = np.array(X)
+y = np.array(y)
+np.random.seed(42)
+indices = np.arange(len(X))
+np.random.shuffle(indices)
+split = int(len(X) * 0.2)
+test_idx = indices[:split]
+train_idx = indices[split:]
+X_train, y_train = X[train_idx], y[train_idx]
+X_test, y_test = X[test_idx], y[test_idx]
+
+# Label mapping for string to integer conversion
+label_to_int = {label: idx for idx, label in enumerate(np.unique(y))}
+
+def compute_metrics(y_true, y_pred, num_classes):
+    cm = np.zeros((num_classes, num_classes), dtype=int)
+    for t, p in zip(y_true, y_pred):
+        cm[t][p] += 1
+
+    precision, recall, f1 = [], [], []
+    for i in range(num_classes):
+        TP = cm[i][i]
+        FP = np.sum(cm[:, i]) - TP
+        FN = np.sum(cm[i, :]) - TP
+        prec = TP / (TP + FP + 1e-9)
+        rec = TP / (TP + FN + 1e-9)
+        f1_score = 2 * prec * rec / (prec + rec + 1e-9)
+        precision.append(prec)
+        recall.append(rec)
+        f1.append(f1_score)
+
+    return np.mean(precision), np.mean(recall), np.mean(f1)
+
+for k in k_values:
+    y_pred = []
+
+    for test_point in X_test:
+        distances = np.linalg.norm(X_train - test_point, axis=1)
+        nn_indices = np.argsort(distances)[:k]
+        nn_labels = y_train[nn_indices]
+        most_common = Counter(nn_labels).most_common(1)[0][0]
+        y_pred.append(most_common)
+
+    y_pred = np.array(y_pred)
+
+    # Convert string labels to integer IDs for indexing
+    y_test_int = np.array([label_to_int[label] if isinstance(label, str) else label for label in y_test])
+    y_pred_int = np.array([label_to_int[label] if isinstance(label, str) else label for label in y_pred])
+
+    # Calculate metrics
+    acc = np.mean(y_pred_int == y_test_int)
+    acc_list.append(acc)
+
+    # Compute Precision, Recall, F1
+    prec, rec, f1 = compute_metrics(y_test_int, y_pred_int, num_classes=len(np.unique(y)))
+    prec_list.append(prec)
+    rec_list.append(rec)
+    f1_list.append(f1)
+
+    print(f"k={k} | Acc={acc:.2f} | Prec={prec:.2f} | Rec={rec:.2f} | F1={f1:.2f}")
+
+    if acc > best_acc:
+        best_acc = acc
+        best_k = k
+
+print(f"\n Best Accuracy: {best_acc * 100:.2f}% with k = {best_k}")
+
+# ---- PLOTS ----
+
+plt.figure(figsize=(12, 6))
+
+
+# Precision, Recall, F1 vs. k
+plt.subplot(1, 2, 2)
+plt.plot(k_values, prec_list, marker='o', label='Precision', color='skyblue')
+plt.plot(k_values, rec_list, marker='s', label='Recall', color='lightgreen')
+plt.plot(k_values, f1_list, marker='^', label='F1 Score', color='salmon')
+plt.title("Precision, Recall, F1 vs. k")
+plt.xlabel("k")
+plt.ylabel("Score")
+plt.ylim(0, 1.05)
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
