@@ -1,0 +1,20 @@
+inertias = []
+K_range = range(1, 15)
+for k in K_range:
+    kmeans = KMeansClustering(k=k)
+    kmeans.fit(normalize_features(X))
+
+    # Inertia = sum of squared distances from each point to its cluster centroid
+    inertia = 0
+    for i, x in enumerate(X):
+        centroid = kmeans.centroids[kmeans.labels[i]]
+        inertia += np.sum((np.array(x) - np.array(centroid)) ** 2)
+
+    inertias.append(inertia)
+
+plt.plot(K_range, inertias, marker='o')
+plt.title("Elbow Method for Optimal k")
+plt.xlabel("Number of Clusters (k)")
+plt.ylabel("Inertia (Within-cluster SSE)")
+plt.grid(True)
+plt.show()
