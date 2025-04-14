@@ -1,0 +1,3 @@
+dataset_path = '/content/drive/MyDrive/genres_original'
+X, y = prepare_dataset(dataset_path)
+print("Dataset size:", len(X))
