@@ -84,10 +84,21 @@ Available as .wav files with metadata.
 *   To systematically compare results, we will use:
    
 *   Accuracy, Precision, Recall, and F1-score
+
+
+
+
+# 7. Contributions
+
+    Member	Contributions
+    Palavalasa Varshith Narayan	K-Means Clustering
+    Palli Sunil Kumar	Naive Bayes
+    Bellam Suman Chowdary	KNN
+    Saketi Krupa Rao	Decision Tree, Random Forest
+    Parupuni Joy Charan	Logistic Regression
+    Bure Siddardha	SVM
+    All Members	Features, Report, Video, Meetings
    
-*   Confusion Matrices to analyze misclassifications
-   
-*   Qualitative analysis to identify failure cases
 
 
 
