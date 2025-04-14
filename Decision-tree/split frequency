@@ -1,0 +1,12 @@
+# ---------- PLOTS ----------
+# Plot Feature Importance
+plt.figure(figsize=(8, 5))
+features = ['Centroid', 'Bandwidth', 'Rolloff', 'ZCR', 'RMSE', 'Tempo', 'Duration']
+importances = [feature_counts.get(i, 0) for i in range(len(features))]
+plt.bar(features, importances, color='skyblue')
+plt.title('Feature Importance (Split Frequency)')
+plt.xlabel('Feature')
+plt.ylabel('Count in Forest')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
