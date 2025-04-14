@@ -1,0 +1,73 @@
+import os
+import wave
+import numpy as np
+
+def find_wav_files(root_folder):
+    wav_files = []
+    for foldername, subfolders, filenames in os.walk(root_folder):
+        for filename in filenames:
+            if filename.lower().endswith('.wav'):
+                wav_files.append(os.path.join(foldername, filename))
+    return wav_files
+
+
+def extract_features(filepath):
+    wav = wave.open(filepath, 'rb')
+    n_channels = wav.getnchannels()
+    framerate = wav.getframerate()
+    n_frames = wav.getnframes()
+    signal = wav.readframes(n_frames)
+    wav.close()
+
+    signal = np.frombuffer(signal, dtype=np.int16)
+
+    if n_channels > 1:
+        signal = signal[::n_channels]  # take one channel
+
+    if len(signal) < framerate * 2:
+        return None  # skip files < 2s
+
+    # Normalize signal
+    signal = signal / np.max(np.abs(signal))
+
+    # Duration
+    duration = len(signal) / framerate
+
+    # FFT-based features
+    spectrum = np.fft.fft(signal)
+    magnitude = np.abs(spectrum[:len(spectrum)//2])
+    freq = np.fft.fftfreq(len(signal), 1/framerate)[:len(spectrum)//2]
+
+    mag_sum = np.sum(magnitude)
+    if mag_sum == 0:
+        return None
+    norm_magnitude = magnitude / mag_sum
+
+    # Spectral Centroid
+    centroid = np.sum(freq * norm_magnitude)
+
+    # Spectral Bandwidth
+    bandwidth = np.sqrt(np.sum(((freq - centroid)**2) * norm_magnitude))
+
+    # Spectral Rolloff (85%)
+    cumulative_energy = np.cumsum(norm_magnitude)
+    rolloff_idx = np.where(cumulative_energy >= 0.85)[0]
+    rolloff_freq = freq[rolloff_idx[0]] if len(rolloff_idx) > 0 else freq[-1]
+
+    # Zero Crossing Rate
+    zero_crossings = np.sum(np.diff(np.sign(signal)) != 0) / len(signal)
+
+    # Root Mean Square Energy
+    rmse = np.sqrt(np.mean(signal**2))
+
+    # Tempo estimate (count energy peaks in segments)
+    window_size = framerate // 2  # half-second
+    energy_peaks = 0
+    for i in range(0, len(signal) - window_size, window_size):
+        window = signal[i:i+window_size]
+        energy = np.sqrt(np.mean(window**2))
+        if energy > 0.1:
+            energy_peaks += 1
+    tempo_estimate = (energy_peaks * 60) / duration  # approx BPM
+
+    return [centroid, bandwidth, rolloff_freq, zero_crossings, rmse, tempo_estimate, duration]
