@@ -99,21 +99,11 @@ Available as .wav files with metadata.
     Bure Siddardha	SVM
     All Members	Features, Report, Video, Meetings
    
+# 8. Requirements
 
-
-
-
-# 7. Implementation Plan  
-
- -  Feature Extraction: Extract key features using Librosa.
-   
- -  Preprocessing: Normalize data and prepare it for ML models.
-   
- -  Model Training & Testing: Implement the selected ML techniques.
-   
- -  Comparison & Analysis: Evaluate models and analyze errors.
-   
- -  Daily Updates: Regularly update findings and improvements.
+->Python 3.x
+->numpy
+->matplotlib for plots
 
 
 
