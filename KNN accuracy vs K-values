@@ -1,0 +1,26 @@
+import matplotlib.pyplot as plt
+
+
+# Evaluate and store results
+import random
+
+k_values = list(range(1, 16))  # Create a list from 1 to 15
+# random.shuffle(k_values)       # Shuffle the list in-place
+k_values = k_values[:15]   # Take only the required number (up to 15) in case it overflows
+
+accuracies = []
+
+for k in k_values:
+    acc = evaluate_knn(X, y, k)
+    accuracies.append(acc)
+    print(f"k-NN Accuracy (k={k}): {acc * 100:.2f}%")
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(k_values, [a * 100 for a in accuracies], marker='o', linestyle='-', color='teal')
+plt.title('k-NN Accuracy vs. k-value')
+plt.xlabel('k (Number of Neighbors)')
+plt.ylabel('Accuracy (%)')
+plt.xticks(k_values)
+plt.grid(True)
+plt.show()
