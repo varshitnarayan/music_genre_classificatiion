@@ -1,0 +1,53 @@
+import matplotlib.pyplot as plt
+
+def compute_manual_metrics(y_true, y_pred, classes):
+    num_classes = len(classes)
+    cm = np.zeros((num_classes, num_classes), dtype=int)
+    class_to_idx = {cls: idx for idx, cls in enumerate(classes)}
+
+    for t, p in zip(y_true, y_pred):
+        cm[class_to_idx[t]][class_to_idx[p]] += 1
+
+    precision, recall, f1 = [], [], []
+    for i in range(num_classes):
+        TP = cm[i][i]
+        FP = np.sum(cm[:, i]) - TP
+        FN = np.sum(cm[i, :]) - TP
+
+        prec = TP / (TP + FP + 1e-9)
+        rec = TP / (TP + FN + 1e-9)
+        f1_score = 2 * prec * rec / (prec + rec + 1e-9)
+
+        precision.append(prec)
+        recall.append(rec)
+        f1.append(f1_score)
+
+    return precision, recall, f1, classes
+
+# Re-run evaluation with predictions captured
+X_norm = normalize_features(X)
+X_train, X_test, y_train, y_test = my_train_test_split(X_norm, y, test_size=0.2, random_state=42)
+
+model = GaussianNaiveBayes()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+# Compute metrics
+precision, recall, f1, class_labels = compute_manual_metrics(y_test, y_pred, np.unique(y))
+
+# Plot
+x = np.arange(len(class_labels))
+width = 0.25
+
+plt.figure(figsize=(10, 6))
+plt.bar(x - width, precision, width, label='Precision', color='skyblue')
+plt.bar(x, recall, width, label='Recall', color='lightgreen')
+plt.bar(x + width, f1, width, label='F1 Score', color='salmon')
+plt.xticks(x, [str(c) for c in class_labels], rotation=45)
+plt.ylim(0, 1)
+plt.ylabel("Score")
+plt.title("Precision, Recall, and F1 Score per Class (Naive Bayes)")
+plt.legend()
+plt.grid(True, axis='y')
+plt.tight_layout()
+plt.show()
