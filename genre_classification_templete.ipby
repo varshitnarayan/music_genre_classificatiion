@@ -45,12 +45,6 @@ def evaluate_model(model, X_test, y_test):
     """Evaluate model performance and display results."""
     pass  # Implement evaluation
 
-# Step 7: Compare Models & Analyze Failures
-# TODO: Perform failure case analysis
-
-def analyze_failures(y_true, y_pred):
-    """Analyze misclassified samples."""
-    pass  # Implement failure case analysis
 
 # Main Execution Flow
 if __name__ == "__main__":
