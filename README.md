@@ -101,9 +101,9 @@ Available as .wav files with metadata.
    
 # 8. Requirements
 
--> Python 3.x
--> numpy
--> matplotlib for plots
+*  Python 3.x
+*  numpy
+*  matplotlib for plots
 
 
 
