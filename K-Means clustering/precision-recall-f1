@@ -1,0 +1,66 @@
+import matplotlib.pyplot as plt
+
+def compute_kmeans_metrics(y_true, y_pred, classes):
+    num_classes = len(classes)
+    cm = np.zeros((num_classes, num_classes), dtype=int)
+    class_to_idx = {cls: idx for idx, cls in enumerate(classes)}
+
+    for t, p in zip(y_true, y_pred):
+        cm[class_to_idx[t]][class_to_idx[p]] += 1
+
+    precision, recall, f1 = [], [], []
+    for i in range(num_classes):
+        TP = cm[i][i]
+        FP = np.sum(cm[:, i]) - TP
+        FN = np.sum(cm[i, :]) - TP
+
+        prec = TP / (TP + FP + 1e-9)
+        rec = TP / (TP + FN + 1e-9)
+        f1_score = 2 * prec * rec / (prec + rec + 1e-9)
+
+        precision.append(prec)
+        recall.append(rec)
+        f1.append(f1_score)
+
+    return precision, recall, f1, classes
+
+# Run K-Means and get predicted labels
+X_norm = normalize_features(X)
+X_arr = np.array(X)
+y_arr = np.array(y)
+
+kmeans = KMeansClustering(k=10)
+kmeans.fit(X_arr)
+
+# Map clusters to labels
+cluster_to_labels = {i: [] for i in range(10)}
+for cluster, label in zip(kmeans.labels, y_arr):
+    cluster_to_labels[cluster].append(label)
+
+cluster_label_map = {}
+for cluster, labels in cluster_to_labels.items():
+    label_counts = {}
+    for label in labels:
+        label_counts[label] = label_counts.get(label, 0) + 1
+    cluster_label_map[cluster] = max(label_counts, key=label_counts.get, default=-1)
+
+y_pred = [cluster_label_map[c] for c in kmeans.labels]
+
+# Metrics and plot
+precision, recall, f1, class_labels = compute_kmeans_metrics(y_arr, y_pred, np.unique(y))
+
+x = np.arange(len(class_labels))
+width = 0.25
+
+plt.figure(figsize=(10, 6))
+plt.bar(x - width, precision, width, label='Precision', color='skyblue')
+plt.bar(x, recall, width, label='Recall', color='lightgreen')
+plt.bar(x + width, f1, width, label='F1 Score', color='salmon')
+plt.xticks(x, [str(cls) for cls in class_labels], rotation=45)
+plt.ylim(0, 1)
+plt.ylabel("Score")
+plt.title("Precision, Recall, and F1 Score per Class (K-Means)")
+plt.legend()
+plt.grid(True, axis='y')
+plt.tight_layout()
+plt.show()
