@@ -1,0 +1,14 @@
+def plot_feature_distribution(X, y, feature_index, feature_name, index_to_label):
+    plt.figure(figsize=(10, 5))
+    for label in sorted(set(y)):
+        values = [X[i][feature_index] for i in range(len(X)) if y[i] == label]
+        plt.hist(values, bins=20, alpha=0.5, label=index_to_label[label])
+    plt.title(f"Distribution of {feature_name}")
+    plt.xlabel(feature_name)
+    plt.ylabel("Frequency")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+# Example: Spectral Centroid (index 0)
+plot_feature_distribution(X_norm, y_encoded, 0, 'Spectral Centroid', index_to_label)
