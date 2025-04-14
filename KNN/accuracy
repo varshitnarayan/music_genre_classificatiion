@@ -34,4 +34,4 @@ for k in sorted(k_values):
         best_acc = accuracy
         best_k = k
 
-print(f"\n✅ Best Accuracy: {best_acc * 100:.2f}% with k = {best_k}")
+print(f"\n Best Accuracy: {best_acc * 100:.2f}% with k = {best_k}")
