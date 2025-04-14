@@ -1,0 +1,14 @@
+def prepare_dataset(dataset_path):
+    X = []
+    y = []
+    wav_files = find_wav_files(dataset_path)
+    for file_path in wav_files:
+        try:
+            features = extract_features(file_path)
+            if features is not None:
+                label = os.path.basename(os.path.dirname(file_path))
+                X.append(features)
+                y.append(label)
+        except Exception as e:
+            print(f"Failed to process {file_path}: {e}")
+    return X, y
