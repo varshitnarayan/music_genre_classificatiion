@@ -1,0 +1,91 @@
+import numpy as np
+
+class KMeansClustering:
+    def __init__(self, k=10, max_iters=100):
+        self.k = k
+        self.max_iters = max_iters
+        self.centroids = []
+        self.labels = []
+
+    def initialize_centroids(self, X):
+        indices = np.arange(len(X))
+        np.random.shuffle(indices)
+        centroids = [X[i] for i in indices[:self.k]]
+        return centroids
+
+    def assign_clusters(self, X, centroids):
+        clusters = [[] for _ in range(self.k)]
+        for x in X:
+            distances = [np.linalg.norm(np.array(x) - np.array(c)) for c in centroids]
+            cluster_idx = np.argmin(distances)
+            clusters[cluster_idx].append(x)
+        return clusters
+
+    def update_centroids(self, clusters):
+        new_centroids = []
+        for cluster in clusters:
+            if len(cluster) > 0:
+                new_centroids.append(np.mean(cluster, axis=0).tolist())
+            else:
+                new_centroids.append([0.0] * len(clusters[0][0]))  # handle empty cluster
+        return new_centroids
+
+    def fit(self, X):
+        X = np.array(X)
+        self.centroids = self.initialize_centroids(X)
+        for _ in range(self.max_iters):
+            clusters = self.assign_clusters(X, self.centroids)
+            new_centroids = self.update_centroids(clusters)
+            if np.allclose(self.centroids, new_centroids):
+                break
+            self.centroids = new_centroids
+
+        self.labels = []
+        for x in X:
+            distances = [np.linalg.norm(np.array(x) - np.array(c)) for c in self.centroids]
+            cluster_idx = np.argmin(distances)
+            self.labels.append(cluster_idx)
+
+
+
+def evaluate_kmeans(X, y, k=10):
+    X = normalize_features(X)
+    X = np.array(X)
+    y = np.array(y)
+
+    kmeans = KMeansClustering(k=k)
+    kmeans.fit(X)
+    predicted_clusters = kmeans.labels
+
+    # Manual mapping from cluster -> most frequent label
+    cluster_to_labels = {}
+    for i in range(k):
+        cluster_to_labels[i] = []
+
+    for cluster, label in zip(predicted_clusters, y):
+        cluster_to_labels[cluster].append(label)
+
+    cluster_label_map = {}
+    for cluster in cluster_to_labels:
+        label_counts = {}
+        for label in cluster_to_labels[cluster]:
+            if label not in label_counts:
+                label_counts[label] = 0
+            label_counts[label] += 1
+        # Get most common label manually
+        most_common_label = None
+        max_count = -1
+        for label, count in label_counts.items():
+            if count > max_count:
+                max_count = count
+                most_common_label = label
+        cluster_label_map[cluster] = most_common_label
+
+    # Predict final labels using cluster map
+    predicted_labels = [cluster_label_map[c] for c in predicted_clusters]
+
+    acc = np.mean(predicted_labels == y)
+    print(f"K-Means Accuracy (Manual): {acc * 100:.2f}%")
+
+
+evaluate_kmeans(X, y, k=10)
