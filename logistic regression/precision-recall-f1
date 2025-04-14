@@ -1,0 +1,44 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Build confusion matrix manually
+num_classes = len(classes)
+cm = np.zeros((num_classes, num_classes), dtype=int)
+for true, pred in zip(y_test, y_pred):
+    cm[true][pred] += 1
+
+# Compute precision, recall, F1 manually
+precision = []
+recall = []
+f1 = []
+
+for i in range(num_classes):
+    TP = cm[i][i]
+    FP = np.sum(cm[:, i]) - TP
+    FN = np.sum(cm[i, :]) - TP
+
+    prec = TP / (TP + FP + 1e-9)
+    rec = TP / (TP + FN + 1e-9)
+    f1_score = 2 * prec * rec / (prec + rec + 1e-9)
+
+    precision.append(prec)
+    recall.append(rec)
+    f1.append(f1_score)
+
+# Bar plot
+x = np.arange(len(classes))
+width = 0.25
+
+plt.figure(figsize=(10, 6))
+plt.bar(x - width, precision, width, label='Precision', color='skyblue')
+plt.bar(x, recall, width, label='Recall', color='lightgreen')
+plt.bar(x + width, f1, width, label='F1 Score', color='salmon')
+plt.xticks(x, classes.astype(str), rotation=45)
+plt.ylim(0, 1)
+plt.ylabel("Score")
+plt.title("Precision, Recall, and F1 Score per Class (Manual Computation)")
+plt.legend()
+plt.grid(True, axis='y')
+plt.tight_layout()
+plt.show()
