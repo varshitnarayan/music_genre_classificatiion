@@ -1,0 +1,32 @@
+def plot_pca(X, y, index_to_label):
+    X_np = np.array(X)
+    y_np = np.array(y)
+
+    # Center the data
+    X_centered = X_np - X_np.mean(axis=0)
+
+    # Compute covariance and eigenvalues/vectors
+    cov = np.cov(X_centered.T)
+    eigvals, eigvecs = np.linalg.eig(cov)
+
+    # Sort by top 2 eigenvectors
+    sorted_indices = np.argsort(eigvals)[::-1]
+    top2 = eigvecs[:, sorted_indices[:2]]
+
+    X_reduced = X_centered @ top2
+
+    # Plot
+    plt.figure(figsize=(8,6))
+    unique_labels = sorted(set(y_np))
+    for label in unique_labels:
+        idx = y_np == label
+        plt.scatter(X_reduced[idx, 0], X_reduced[idx, 1], label=index_to_label[label], alpha=0.6)
+    plt.title("PCA of Feature Space")
+    plt.xlabel("Principal Component 1")
+    plt.ylabel("Principal Component 2")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+plot_pca(X_norm, y_encoded, index_to_label)
