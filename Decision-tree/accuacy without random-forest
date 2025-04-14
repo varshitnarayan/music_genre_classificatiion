@@ -1,0 +1,100 @@
+def gini_impurity(labels):
+    total = len(labels)
+    if total == 0:
+        return 0
+    counts = {}
+    for label in labels:
+        counts[label] = counts.get(label, 0) + 1
+    impurity = 1.0
+    for label in counts:
+        prob = counts[label] / total
+        impurity -= prob ** 2
+    return impurity
+
+
+def best_split(X, y):
+    best_gain = 0
+    best_index = None
+    best_value = None
+    current_impurity = gini_impurity(y)
+
+    for feature_index in range(len(X[0])):
+        values = set(row[feature_index] for row in X)
+        for val in values:
+            left_X, right_X, left_y, right_y = [], [], [], []
+            for i in range(len(X)):
+                if X[i][feature_index] <= val:
+                    left_X.append(X[i])
+                    left_y.append(y[i])
+                else:
+                    right_X.append(X[i])
+                    right_y.append(y[i])
+            if len(left_y) == 0 or len(right_y) == 0:
+                continue
+            p = len(left_y) / len(y)
+            gain = current_impurity - (p * gini_impurity(left_y) + (1 - p) * gini_impurity(right_y))
+            if gain > best_gain:
+                best_gain = gain
+                best_index = feature_index
+                best_value = val
+    return best_index, best_value
+
+
+class TreeNode:
+    def __init__(self, feature_index=None, value=None, left=None, right=None, prediction=None):
+        self.feature_index = feature_index
+        self.value = value
+        self.left = left
+        self.right = right
+        self.prediction = prediction
+
+def build_tree(X, y, depth=0, max_depth=10, min_size=1):
+    if len(set(y)) == 1 or depth >= max_depth or len(X) <= min_size:
+        # Leaf node
+        prediction = max(set(y), key=y.count)
+        return TreeNode(prediction=prediction)
+
+    index, value = best_split(X, y)
+    if index is None:
+        return TreeNode(prediction=max(set(y), key=y.count))
+
+    left_X, right_X, left_y, right_y = [], [], [], []
+    for i in range(len(X)):
+        if X[i][index] <= value:
+            left_X.append(X[i])
+            left_y.append(y[i])
+        else:
+            right_X.append(X[i])
+            right_y.append(y[i])
+
+    left_node = build_tree(left_X, left_y, depth+1, max_depth, min_size)
+    right_node = build_tree(right_X, right_y, depth+1, max_depth, min_size)
+    return TreeNode(index, value, left_node, right_node)
+
+
+def tree_predict(node, row):
+    if node.prediction is not None:
+        return node.prediction
+    if row[node.feature_index] <= node.value:
+        return tree_predict(node.left, row)
+    else:
+        return tree_predict(node.right, row)
+
+
+
+def evaluate_tree(X, y, max_depth=10):
+    correct = 0
+    total = len(X)
+    for i in range(total):
+        X_train = X[:i] + X[i+1:]
+        y_train = y[:i] + y[i+1:]
+        tree = build_tree(X_train, y_train, max_depth=max_depth)
+        y_pred = tree_predict(tree, X[i])
+        if y_pred == y[i]:
+            correct += 1
+    return correct / total
+
+
+# X = normalize_features(X)
+accuracy = evaluate_tree(X, y, max_depth=5)
+print(f"Decision Tree Accuracy: {accuracy * 100:.2f}%")
